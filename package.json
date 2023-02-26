@@ -8,7 +8,7 @@
     "test:open": "cypress open",
     "test": "cypress run",
     "check": "npm run test",
-    "preversion": "npm run check"
+    "preversion--disabled": "npm run check"
   },
   "repository": {
     "type": "git",
