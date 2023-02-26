@@ -1,3 +1,21 @@
+const commands = {
+  successful: (done = null) =>
+    cy
+      .get("body")
+      .should("exist")
+      .then(() => done?.()),
+  error: () =>
+    cy.wait(100).then(() => {
+      throw new Error("err");
+    }),
+  thisShouldBeUnreachable: () =>
+    cy.then(() => {
+      const err = new Error("This code should not be reachable!");
+      Error.captureStackTrace(err, commands.thisShouldBeUnreachable);
+      throw err;
+    }),
+};
+
 describe("prerequisite", () => {
   it("passed: starts off fine", () => {
     //
@@ -5,72 +23,76 @@ describe("prerequisite", () => {
   it("skipped: here's a failing prerequisite, so it should be skipped alone", () => {
     cy.prerequisite(() => {
       // When this fails, this test will be skipped:
-      cy.get("body", { timeout: 100 }).should("not.exist");
+      commands.error();
     });
-    cy.then(() => {
-      throw new Error("This error is not supposed to be reachable");
-    });
+    commands.thisShouldBeUnreachable();
   });
 
   it("passed: this should be fine", () => {
     //
   });
 
-  it("passed: if there's no failure, it should continue", () => {
+  it("passed: if there's no failure, it should continue", (done) => {
     cy.prerequisite(() => {
-      cy.get("body").should("exist");
+      commands.successful();
     });
-    cy.get("body").should("exist");
+    commands.successful(done);
   });
 
-  describe("skip entire suite when prerequisite fails", () => {
-    it("skipped: when this test fails, the whole suite is skipped", () => {
-      cy.prerequisiteForSuite(() => {
-        // When this fails, the whole suite will be skipped:
-        cy.get("body", { timeout: 100 }).should("not.exist");
-      });
-      cy.then(() => {
-        throw new Error("This error is not supposed to be reachable");
+  describe("in a before block", () => {
+    before(() => {
+      cy.prerequisite(() => {
+        commands.error();
       });
     });
+
+    it("skipped: because before hook failed", () => {
+      commands.thisShouldBeUnreachable();
+    });
+    it("skipped: because before hook failed", () => {
+      commands.thisShouldBeUnreachable();
+    });
+  });
+});
+
+describe("prerequisiteForSuite", () => {
+  it("passed: ths should never be skipped", () => {
+    commands.successful();
+  });
+
+  describe("skip entire suite once prerequisite fails", () => {
+    it("passed: when prerequisite passes", (done) => {
+      cy.prerequisiteForSuite(() => {
+        commands.successful();
+      });
+      commands.successful(done);
+    });
+
+    it("skipped: when this test fails, the rest of the suite is skipped", () => {
+      cy.prerequisiteForSuite(() => {
+        // When this fails, the whole suite will be skipped:
+        commands.error();
+      });
+      commands.thisShouldBeUnreachable();
+    });
+
     it("skipped: because the prerequisite failed", () => {
-      //
+      commands.thisShouldBeUnreachable();
     });
   });
 
   describe("in a before block", () => {
     before(() => {
       cy.prerequisiteForSuite(() => {
-        cy.get("body", { timeout: 100 }).should("not.exist");
+        commands.error();
       });
     });
 
     it("skipped: because before hook failed", () => {
-      //
+      commands.thisShouldBeUnreachable();
     });
     it("skipped: because before hook failed", () => {
-      //
-    });
-  });
-});
-describe("config", { prerequisiteBehavior: "fail" }, () => {
-  it("should fail", () => {
-    cy.prerequisiteForSuite(() => {
-      cy.get("body", { timeout: 100 }).should("not.exist");
-    });
-  });
-  it("skipped: prerequisite failed", () => {
-    //
-  });
-});
-
-describe("these tests should error", () => {
-  it("should fail: if there's no failure, it should continue, and then fail the test", () => {
-    cy.prerequisite(() => {
-      cy.get("body").should("exist");
-    });
-    cy.then(() => {
-      throw new Error("This test is supposed to fail");
+      commands.thisShouldBeUnreachable();
     });
   });
 });
