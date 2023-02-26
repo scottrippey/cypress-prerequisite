@@ -34,7 +34,7 @@ function skipSuite(err) {
   const test = ctx.currentTest || ctx.test;
 
   // Mark the parent as failed
-  if (test.parent) test.parent.prerequisiteForSuiteFailed = true;
+  if (test.parent) test.parent.prerequisiteForSuiteFailed = test;
 
   if (prerequisiteBehavior() === "skip") {
     ctx.skip(); // (throws)
@@ -46,10 +46,17 @@ function skipCurrentIfSuiteFailed() {
   const ctx = getMochaContext();
   const test = ctx.currentTest || ctx.test;
 
+  // If this is an automatic retry, erase the previous failure:
+  const isRetry =
+    test.id && test.id === test.parent?.prerequisiteForSuiteFailed?.id;
+  if (isRetry) {
+    test.parent.prerequisiteForSuiteFailed = null;
+  }
+
   // Search ancestors to see if any parent suites were skipped:
   let parent = test.parent;
   while (parent) {
-    if (parent.prerequisiteForSuiteFailed === true) {
+    if (parent.prerequisiteForSuiteFailed) {
       ctx.skip(); // (throws)
     }
     parent = parent.parent;

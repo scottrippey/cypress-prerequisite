@@ -20,21 +20,39 @@ const commands = {
     }),
 };
 
-describe("config", { prerequisiteBehavior: "fail" }, () => {
-  it("should fail: this test has broken prerequisites", () => {
-    cy.prerequisiteForSuite(() => {
-      commands.error();
-    });
-  });
-  it("skipped: prerequisite failed", () => {
-    commands.thisShouldBeUnreachable();
-  });
-});
 describe("these tests should error", () => {
-  it("should fail: if there's no failure, it should continue, and then fail the test", () => {
+  it("should fail: this prerequisite is fine, but the test has errors", () => {
     cy.prerequisite(() => {
       commands.successful();
     });
     commands.error();
   });
 });
+
+describe(
+  "when prerequisiteBehavior = 'fail'",
+  { prerequisiteBehavior: "fail" },
+  () => {
+    it("should fail: this test has a broken prerequisite", () => {
+      cy.prerequisite(() => {
+        commands.error();
+      });
+    });
+
+    it("passes: this test is just fine", (done) => {
+      cy.prerequisite(() => {
+        commands.successful();
+      });
+      commands.successful(done);
+    });
+
+    it("should fail: this test has broken prerequisitesForSuite", () => {
+      cy.prerequisiteForSuite(() => {
+        commands.error();
+      });
+    });
+    it("skipped: previous prerequisiteForSuite failed", () => {
+      commands.thisShouldBeUnreachable();
+    });
+  }
+);
