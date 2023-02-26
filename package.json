@@ -5,7 +5,9 @@
   "main": "src/commands/prerequisite.js",
   "types": "src/commands/prerequisite.d.ts",
   "scripts": {
-    "check": "echo No tests yet",
+    "test:open": "cypress open",
+    "test": "cypress run",
+    "check": "npm run test",
     "preversion": "npm run check"
   },
   "repository": {
