@@ -1,0 +1,28 @@
+{
+  "name": "cypress-prerequisite",
+  "version": "0.7.1",
+  "description": "Skip tests if prerequisites aren't met.",
+  "main": "src/commands/prerequisite.js",
+  "types": "src/commands/prerequisite.d.ts",
+  "scripts": {
+    "test:open": "cypress open",
+    "test": "cypress run",
+    "check": "npm run test",
+    "preversion--disabled": "npm run check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scottrippey/cypress-prerequisite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scottrippey/cypress-prerequisite/issues"
+  },
+  "homepage": "https://github.com/scottrippey/cypress-prerequisite#readme",
+  "devDependencies": {
+    "cypress": "^12.7.0",
+    "prettier": "^2.8.4"
+  }
+}
