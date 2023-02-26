@@ -5,10 +5,10 @@
   "main": "src/commands/prerequisite.js",
   "types": "src/commands/prerequisite.d.ts",
   "scripts": {
-    "test:open": "cypress open",
+    "test:open": "cypress open --e2e",
     "test": "cypress run",
     "check": "npm run test",
-    "preversion--disabled": "npm run check"
+    "preversion--DISABLED": "npm run check"
   },
   "repository": {
     "type": "git",

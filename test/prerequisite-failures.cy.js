@@ -21,7 +21,7 @@ const commands = {
 };
 
 describe("config", { prerequisiteBehavior: "fail" }, () => {
-  it("should fail", () => {
+  it("should fail: this test has broken prerequisites", () => {
     cy.prerequisiteForSuite(() => {
       commands.error();
     });
