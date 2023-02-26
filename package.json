@@ -1,6 +1,6 @@
 {
   "name": "cypress-prerequisite",
-  "version": "0.9.0",
+  "version": "0.7.0",
   "description": "Skip tests if prerequisites aren't met.",
   "main": "src/commands/prerequisite.js",
   "types": "src/commands/prerequisite.d.ts",
