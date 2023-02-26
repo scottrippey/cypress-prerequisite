@@ -12,13 +12,22 @@ Cypress.Commands.add("prerequisiteForSuite", (commands) => {
 // Check each test to see if the parent was skipped:
 beforeEach(skipCurrentIfSuiteFailed);
 
+/** @returns {"skip"|"fail"|string} Returns the current configuration */
+function prerequisiteBehavior() {
+  return Cypress.config("prerequisiteBehavior") || "skip";
+}
+
 /** @returns {Mocha.Context} */
 function getMochaContext() {
   return cy.state("runnable").ctx;
 }
 function skipCurrent(err) {
-  const ctx = getMochaContext();
-  ctx.skip(); // (throws)
+  if (prerequisiteBehavior() === "skip") {
+    const ctx = getMochaContext();
+    ctx.skip(); // (throws)
+  } else {
+    throw err;
+  }
 }
 function skipSuite(err) {
   const ctx = getMochaContext();
@@ -27,7 +36,11 @@ function skipSuite(err) {
   // Mark the parent as failed
   if (test.parent) test.parent.prerequisiteForSuiteFailed = true;
 
-  ctx.skip(); // (throws)
+  if (prerequisiteBehavior() === "skip") {
+    ctx.skip(); // (throws)
+  } else {
+    throw err;
+  }
 }
 function skipCurrentIfSuiteFailed() {
   const ctx = getMochaContext();

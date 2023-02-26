@@ -1,5 +1,10 @@
 export {};
 declare global {
+  namespace Cypress {
+    interface ResolvedConfigOptions<ComponentDevServerOpts = any> {
+      prerequisiteBehavior?: "skip" | "fail";
+    }
+  }
   export interface Chainable<Subject = any> {
     /**
      * Runs some commands as a prerequisite for the test.
