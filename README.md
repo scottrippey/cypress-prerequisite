@@ -67,12 +67,13 @@ If `#feature-a` does not exist, both of the tests in the `describe` block will b
 ### `prerequisiteBehavior: 'skip' | 'fail'`
 
 `skip` (default)  
-By default, a failed prerequisite means the test will be marked as "skipped", which means the tests will pass.
+By default, a failed prerequisite means the test will be marked as "skipped", which means the test suite will still pass.
 This works well in certain workflows, like Pull Request checks -- so that PRs don't get blocked by external dependencies.
 
 `fail`  
 However, this behavior can be disabled by setting `prerequisiteBehavior: 'fail'`.  
-In this mode, if a prerequisite fails, the test will fail as normal.
-This works well when you want to see failed dependencies -- such as in nightly builds, or for local development.
+In this mode, if a `prerequisite` fails, the test will fail as normal.
+If a `prerequisiteForSuite` fails, the test will fail as normal, and the rest of the tests in the suite will be skipped.
+This setting is especially useful when you want to see failed dependencies -- such as in nightly builds, or for local development.
 
 
