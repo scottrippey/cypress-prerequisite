@@ -1,4 +1,7 @@
 export {};
+
+type MaybeStringOrCallback = string | null | ((error: Error) => string | null);
+
 declare global {
   namespace Cypress {
     interface ResolvedConfigOptions<ComponentDevServerOpts = any> {
@@ -11,6 +14,8 @@ declare global {
        * If using `prerequisiteForSuite`, then the first test will fail, and the rest will be skipped.
        */
       prerequisiteBehavior?: "skip" | "fail";
+      prerequisiteSkipMessage?: MaybeStringOrCallback;
+      prerequisiteSkipSuiteMessage?: MaybeStringOrCallback;
     }
     interface Chainable<Subject = any> {
       /**

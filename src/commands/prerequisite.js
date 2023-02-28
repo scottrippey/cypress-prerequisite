@@ -16,6 +16,12 @@ beforeEach(skipCurrentIfSuiteFailed);
 function prerequisiteBehavior() {
   return Cypress.config("prerequisiteBehavior") || "skip";
 }
+function prerequisiteSkipMessage() {
+  return Cypress.config("prerequisiteSkipMessage") || null;
+}
+function prerequisiteSkipSuiteMessage() {
+  return Cypress.config("prerequisiteSkipSuiteMessage") || null;
+}
 
 /** @returns {Mocha.Context} */
 function getMochaContext() {
@@ -24,6 +30,8 @@ function getMochaContext() {
 function skipCurrent(err) {
   if (prerequisiteBehavior() === "skip") {
     const ctx = getMochaContext();
+    const test = ctx.currentTest || ctx.test;
+    updateTitle(test, err);
     ctx.skip(); // (throws)
   } else {
     throw err;
@@ -34,9 +42,13 @@ function skipSuite(err) {
   const test = ctx.currentTest || ctx.test;
 
   // Mark the parent as failed
-  if (test.parent) test.parent.prerequisiteForSuiteFailed = test;
+  if (test.parent) {
+    test.parent.prerequisiteForSuiteFailed = test;
+    test.parent.prerequisiteForSuiteFailed.prerequisiteError = err;
+  }
 
   if (prerequisiteBehavior() === "skip") {
+    updateTitle(test, err);
     ctx.skip(); // (throws)
   } else {
     throw err;
@@ -57,8 +69,27 @@ function skipCurrentIfSuiteFailed() {
   let parent = test.parent;
   while (parent) {
     if (parent.prerequisiteForSuiteFailed) {
+      const err = parent.prerequisiteForSuiteFailed.prerequisiteError;
+      updateTitle(test, err, true);
       ctx.skip(); // (throws)
     }
     parent = parent.parent;
+  }
+}
+
+/**
+ * Updates the test title.
+ * This only has an effect in `cypress run` mode;
+ * the Cypress UI does not update titles.
+ */
+function updateTitle(test, err, wasSuiteFailure) {
+  let skipMessage = wasSuiteFailure
+    ? prerequisiteSkipSuiteMessage()
+    : prerequisiteSkipMessage();
+  if (typeof skipMessage === "function") {
+    skipMessage = skipMessage(err, test);
+  }
+  if (skipMessage) {
+    test.title += skipMessage;
   }
 }
