@@ -82,14 +82,12 @@ function skipCurrentIfSuiteFailed() {
  * This only has an effect in `cypress run` mode;
  * the Cypress UI does not update titles.
  */
-function updateTitle(test, err, wasSuiteFailure) {
+function updateTitle(test, error, wasSuiteFailure) {
   let skipMessage = wasSuiteFailure
     ? prerequisiteSkipSuiteMessage()
     : prerequisiteSkipMessage();
-  if (typeof skipMessage === "function") {
-    skipMessage = skipMessage(err, test);
-  }
+
   if (skipMessage) {
-    test.title += skipMessage;
+    test.title += Cypress._.template(skipMessage)({ error });
   }
 }

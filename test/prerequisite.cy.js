@@ -97,7 +97,7 @@ describe("prerequisiteForSuite", () => {
 describe(
   "prerequisiteSkipMessage",
   {
-    prerequisiteSkipMessage: (err) => ` (skipped: ${err})`,
+    prerequisiteSkipMessage: ` (skipped: <%= error %>)`,
     prerequisiteSkipSuiteMessage: ` (skipped suite)`,
   },
   () => {
