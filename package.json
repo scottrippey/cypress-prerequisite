@@ -1,9 +1,9 @@
 {
-  "name": "cypress-prerequisite",
+  "name": "cypress-try-or-skip",
   "version": "0.7.5",
-  "description": "Skip tests if prerequisites aren't met.",
-  "main": "src/commands/prerequisite.js",
-  "types": "src/commands/prerequisite.d.ts",
+  "description": "Easy conditional testing with Cypress.  If a command fails, skip the test.",
+  "main": "src/commands/tryOrSkip.js",
+  "types": "src/commands/tryOrSkip.d.ts",
   "scripts": {
     "test:open": "cypress open --e2e",
     "test": "cypress run",
@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scottrippey/cypress-prerequisite.git"
+    "url": "git+https://github.com/scottrippey/cypress-try-or-skip.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/scottrippey/cypress-prerequisite/issues"
+    "url": "https://github.com/scottrippey/cypress-try-or-skip/issues"
   },
-  "homepage": "https://github.com/scottrippey/cypress-prerequisite#readme",
+  "homepage": "https://github.com/scottrippey/cypress-try-or-skip#readme",
   "devDependencies": {
     "cypress": "^12.7.0",
     "prettier": "^2.8.4"

@@ -1,4 +1,4 @@
-import "../../src/commands/prerequisite";
+import "../../src/commands/tryOrSkip";
 
 // ***********************************************
 // This example commands.js shows you how to

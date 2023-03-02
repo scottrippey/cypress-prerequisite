@@ -13,12 +13,12 @@ const commands = {
     }),
 };
 
-describe("prerequisite", () => {
+describe("tryOrSkip", () => {
   it("passed: starts off fine", () => {
     commands.successful();
   });
-  it("skipped: here's a failing prerequisite, so it should be skipped alone", () => {
-    cy.prerequisite(() => {
+  it("skipped: here's a failing command, so it should be skipped alone", () => {
+    cy.tryOrSkip(() => {
       // When this fails, this test will be skipped:
       commands.error();
     });
@@ -30,7 +30,7 @@ describe("prerequisite", () => {
   });
 
   it("passed: if there's no failure, it should continue", (done) => {
-    cy.prerequisite(() => {
+    cy.tryOrSkip(() => {
       commands.successful();
     });
     commands.successful(done);
@@ -38,7 +38,7 @@ describe("prerequisite", () => {
 
   describe("in a before block", () => {
     before(() => {
-      cy.prerequisite(() => {
+      cy.tryOrSkip(() => {
         commands.error();
       });
     });
@@ -52,35 +52,35 @@ describe("prerequisite", () => {
   });
 });
 
-describe("prerequisiteForSuite", () => {
+describe("tryOrSkipSuite", () => {
   it("passed: ths should never be skipped", () => {
     commands.successful();
   });
 
-  describe("skip entire suite once prerequisite fails", () => {
-    it("passed: when prerequisite passes", (done) => {
-      cy.prerequisiteForSuite(() => {
+  describe("skip entire suite once the command fails", () => {
+    it("passed: when command passes", (done) => {
+      cy.tryOrSkipSuite(() => {
         commands.successful();
       });
       commands.successful(done);
     });
 
     it("skipped: when this test fails, the rest of the suite is skipped", () => {
-      cy.prerequisiteForSuite(() => {
+      cy.tryOrSkipSuite(() => {
         // When this fails, the whole suite will be skipped:
         commands.error();
       });
       commands.thisShouldBeUnreachable();
     });
 
-    it("skipped: because the prerequisite failed", () => {
+    it("skipped: because the command failed", () => {
       commands.thisShouldBeUnreachable();
     });
   });
 
   // describe("in a before block", () => {
   //   before(() => {
-  //     cy.prerequisiteForSuite(() => {
+  //     cy.tryOrSkipSuite(() => {
   //       commands.error();
   //     });
   //   });
@@ -95,20 +95,20 @@ describe("prerequisiteForSuite", () => {
 });
 
 describe(
-  "prerequisiteSkipMessage",
+  "tryOrSkipMessage",
   {
-    prerequisiteSkipMessage: ` (skipped: <%= error %>)`,
-    prerequisiteSkipSuiteMessage: ` (skipped suite)`,
+    tryOrSkipMessage: ` (skipped: <%= error %>)`,
+    tryOrSkipSuiteMessage: ` (skipped suite)`,
   },
   () => {
-    it("skipped: prerequisite failed", () => {
-      cy.prerequisite(() => {
+    it("skipped: command failed", () => {
+      cy.tryOrSkip(() => {
         commands.error();
       });
     });
 
-    it("skipped: prerequisiteForSuite failed", () => {
-      cy.prerequisiteForSuite(() => {
+    it("skipped: tryOrSkipSuite failed", () => {
+      cy.tryOrSkipSuite(() => {
         commands.error();
       });
     });

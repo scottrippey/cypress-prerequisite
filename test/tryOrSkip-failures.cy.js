@@ -21,8 +21,8 @@ const commands = {
 };
 
 describe("these tests should error", () => {
-  it("should fail: this prerequisite is fine, but the test has errors", () => {
-    cy.prerequisite(() => {
+  it("should fail: this command is fine, but the test has errors", () => {
+    cy.tryOrSkip(() => {
       commands.successful();
     });
     commands.error();
@@ -30,28 +30,28 @@ describe("these tests should error", () => {
 });
 
 describe(
-  "when prerequisiteBehavior = 'fail'",
-  { prerequisiteBehavior: "fail" },
+  "when tryOrSkipBehavior = 'fail'",
+  { tryOrSkipBehavior: "fail" },
   () => {
-    it("should fail: this test has a broken prerequisite", () => {
-      cy.prerequisite(() => {
+    it("should fail: this test has a broken command", () => {
+      cy.tryOrSkip(() => {
         commands.error();
       });
     });
 
     it("passes: this test is just fine", (done) => {
-      cy.prerequisite(() => {
+      cy.tryOrSkip(() => {
         commands.successful();
       });
       commands.successful(done);
     });
 
-    it("should fail: this test has broken prerequisitesForSuite", () => {
-      cy.prerequisiteForSuite(() => {
+    it("should fail: this test has broken command", () => {
+      cy.tryOrSkipSuite(() => {
         commands.error();
       });
     });
-    it("skipped: previous prerequisiteForSuite failed", () => {
+    it("skipped: previous tryOrSkipSuite failed", () => {
       commands.thisShouldBeUnreachable();
     });
   }

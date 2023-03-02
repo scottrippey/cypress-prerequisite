@@ -1,9 +1,9 @@
-Cypress.Commands.add("prerequisite", (commands) => {
+Cypress.Commands.add("tryOrSkip", (commands) => {
   cy.on("fail", skipCurrent);
   commands();
   cy.then(() => cy.off("fail", skipCurrent));
 });
-Cypress.Commands.add("prerequisiteForSuite", (commands) => {
+Cypress.Commands.add("tryOrSkipSuite", (commands) => {
   cy.on("fail", skipSuite);
   commands();
   cy.then(() => cy.off("fail", skipSuite));
@@ -13,14 +13,14 @@ Cypress.Commands.add("prerequisiteForSuite", (commands) => {
 beforeEach(skipCurrentIfSuiteFailed);
 
 /** @returns {"skip"|"fail"|string} Returns the current configuration */
-function prerequisiteBehavior() {
-  return Cypress.config("prerequisiteBehavior") || "skip";
+function tryOrSkipBehavior() {
+  return Cypress.config("tryOrSkipBehavior") || "skip";
 }
-function prerequisiteSkipMessage() {
-  return Cypress.config("prerequisiteSkipMessage") || null;
+function tryOrSkipMessage() {
+  return Cypress.config("tryOrSkipMessage") || null;
 }
-function prerequisiteSkipSuiteMessage() {
-  return Cypress.config("prerequisiteSkipSuiteMessage") || null;
+function tryOrSkipSuiteMessage() {
+  return Cypress.config("tryOrSkipSuiteMessage") || null;
 }
 
 /** @returns {Mocha.Context} */
@@ -28,7 +28,7 @@ function getMochaContext() {
   return cy.state("runnable").ctx;
 }
 function skipCurrent(err) {
-  if (prerequisiteBehavior() === "skip") {
+  if (tryOrSkipBehavior() === "skip") {
     const ctx = getMochaContext();
     const test = ctx.currentTest || ctx.test;
     updateTitle(test, err);
@@ -43,11 +43,11 @@ function skipSuite(err) {
 
   // Mark the parent as failed
   if (test.parent) {
-    test.parent.prerequisiteForSuiteFailed = test;
-    test.parent.prerequisiteForSuiteFailed.prerequisiteError = err;
+    test.parent.tryOrSkipSuiteFailed = test;
+    test.parent.tryOrSkipSuiteFailed.tryOrSkipError = err;
   }
 
-  if (prerequisiteBehavior() === "skip") {
+  if (tryOrSkipBehavior() === "skip") {
     updateTitle(test, err);
     ctx.skip(); // (throws)
   } else {
@@ -59,17 +59,16 @@ function skipCurrentIfSuiteFailed() {
   const test = ctx.currentTest || ctx.test;
 
   // If this is an automatic retry, erase the previous failure:
-  const isRetry =
-    test.id && test.id === test.parent?.prerequisiteForSuiteFailed?.id;
+  const isRetry = test.id && test.id === test.parent?.tryOrSkipSuiteFailed?.id;
   if (isRetry) {
-    test.parent.prerequisiteForSuiteFailed = null;
+    test.parent.tryOrSkipSuiteFailed = null;
   }
 
   // Search ancestors to see if any parent suites were skipped:
   let parent = test.parent;
   while (parent) {
-    if (parent.prerequisiteForSuiteFailed) {
-      const err = parent.prerequisiteForSuiteFailed.prerequisiteError;
+    if (parent.tryOrSkipSuiteFailed) {
+      const err = parent.tryOrSkipSuiteFailed.tryOrSkipError;
       updateTitle(test, err, true);
       ctx.skip(); // (throws)
     }
@@ -84,8 +83,8 @@ function skipCurrentIfSuiteFailed() {
  */
 function updateTitle(test, error, wasSuiteFailure) {
   let skipMessage = wasSuiteFailure
-    ? prerequisiteSkipSuiteMessage()
-    : prerequisiteSkipMessage();
+    ? tryOrSkipSuiteMessage()
+    : tryOrSkipMessage();
 
   if (skipMessage) {
     test.title += Cypress._.template(skipMessage)({ error });

@@ -7,7 +7,7 @@ module.exports = defineConfig({
       openMode: 2,
     },
     specPattern: ["test/**/*.cy.{js,jsx,ts,tsx}"],
-    excludeSpecPattern: ["**/prerequisite-failures.cy.js"],
+    excludeSpecPattern: ["**/tryOrSkip-failures.cy.js"],
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
