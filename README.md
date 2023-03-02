@@ -14,7 +14,7 @@ Unfortunately, in practice, external dependencies are hard to control, and E2E t
 Install the module as a `devDependency` via `npm install --save-dev cypress-try-or-skip`
 
 And in your `cypress/support/index.js` file, import the module:
-```
+```js
 import 'cypress-try-or-skip`;
 ```
 
@@ -29,7 +29,7 @@ If any of these commands fail, the test will be marked as **skipped**, not **fai
 
 In this example, if `#feature-a` does not exist, then the test will stop executing, and be marked as **skipped**.
 
-```
+```js
 it("if FEATURE A is enabled, clicking the button will open a modal", () => {
   cy.tryOrSkip(() => {
     cy.get("#feature-a").should("exist");
@@ -43,7 +43,7 @@ it("if FEATURE A is enabled, clicking the button will open a modal", () => {
 
 If used inside a `before` block, the **entire suite** (everything inside the `describe` block) will be skipped if the command fails.
 
-```
+```js
 describe("if FEATURE A is enabled", () => {
   before(() => {
     cy.tryOrSkip(() => {
