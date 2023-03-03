@@ -59,7 +59,11 @@ function skipCurrentIfSuiteFailed() {
   const test = ctx.currentTest || ctx.test;
 
   // If this is an automatic retry, erase the previous failure:
-  const isRetry = test.id && test.id === test.parent?.tryOrSkipSuiteFailed?.id;
+  const isRetry =
+    test.id &&
+    test.parent &&
+    test.parent.tryOrSkipSuiteFailed &&
+    test.id === test.parent.tryOrSkipSuiteFailed.id;
   if (isRetry) {
     test.parent.tryOrSkipSuiteFailed = null;
   }
