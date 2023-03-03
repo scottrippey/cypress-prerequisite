@@ -1,6 +1,6 @@
 {
   "name": "cypress-try-or-skip",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "Easy conditional testing with Cypress.  If a command fails, skip the test.",
   "main": "src/commands/tryOrSkip.js",
   "types": "src/commands/tryOrSkip.d.ts",
